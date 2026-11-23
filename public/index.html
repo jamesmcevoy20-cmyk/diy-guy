@@ -48,27 +48,61 @@
 
   <section class="booking" id="booking">
     <h2>Book a Time</h2>
-    <p class="lead-sm">Pick a service, a date and a one or two hour slot. I will confirm by phone.</p>
-    <form id="booking-form" novalidate>
-      <label>Service<select id="service"></select></label>
-      <fieldset class="hrs"><legend>Length of visit</legend>
-        <label><input type="radio" name="hours" value="1" checked> 1 hour</label>
-        <label><input type="radio" name="hours" value="2"> 2 hours</label>
-      </fieldset>
-      <label>Date<select id="date"></select></label>
-      <div class="field"><span class="lbl">Start time</span><div id="times" class="times"></div><span class="err" id="err-start"></span></div>
-      <p id="price" class="price-line"></p>
-      <label>Full name<input id="name" autocomplete="name"><span class="err" id="err-name"></span></label>
-      <label>Phone<input id="phone" type="tel" autocomplete="tel"><span class="err" id="err-phone"></span></label>
-      <label>Email (optional)<input id="email" type="email" autocomplete="email"><span class="err" id="err-email"></span></label>
-      <label>House number and street<input id="addr" autocomplete="street-address"><span class="err" id="err-addr"></span></label>
-      <label>Postcode<input id="pc" autocomplete="postal-code"><span class="err" id="err-pc"></span></label>
-      <label>What needs doing? (optional)<textarea id="notes" rows="3"></textarea></label>
-      <input id="website" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
-      <button class="btn submit" type="submit">Book now</button>
-      <p id="form-msg" class="err"></p>
-    </form>
-    <div id="done" class="done" hidden></div>
+    <div class="grid">
+      <div class="card" id="bookcard">
+        <ol class="steps" id="steps" aria-label="Booking progress"></ol>
+
+        <div class="panel" id="p1">
+          <h3>Choose a service</h3>
+          <p class="lead">Priced per hour. You pay for the time worked, in one or two hour slots.</p>
+          <div class="svc-list" id="svcs" role="radiogroup" aria-label="Choose a service"></div>
+          <div class="actions"><span></span><button class="btn" id="n1" type="button" disabled>Choose a time</button></div>
+        </div>
+
+        <div class="panel" id="p2" hidden>
+          <h3>When suits you?</h3>
+          <p class="lead">Mon to Fri. I will arrive at the start time you pick.</p>
+          <span class="lbl" id="ll">Length of visit</span>
+          <div class="lens" id="lens" role="radiogroup" aria-labelledby="ll"></div>
+          <span class="lbl" id="dl">Day</span>
+          <div class="days" id="dates" role="radiogroup" aria-labelledby="dl"></div>
+          <span class="lbl" id="tl">Start time</span>
+          <div class="wins" id="times" role="radiogroup" aria-labelledby="tl"></div>
+          <p class="note" id="slotnote"></p>
+          <div class="actions"><button class="btn ghost" id="b2" type="button">Back</button><button class="btn" id="n2" type="button" disabled>Add your details</button></div>
+        </div>
+
+        <div class="panel" id="p3" hidden>
+          <h3>Where am I going?</h3>
+          <p class="lead">Used only to confirm and carry out your booking.</p>
+          <form id="form" novalidate>
+            <div class="fields">
+              <div class="fld"><label for="f-name">Full name</label><input id="f-name" autocomplete="name" maxlength="100"><p class="err" id="e-name"></p></div>
+              <div class="fld"><label for="f-phone">Mobile or phone</label><input id="f-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30"><p class="err" id="e-phone"></p></div>
+              <div class="fld full"><label for="f-email">Email <span>(optional)</span></label><input id="f-email" type="email" autocomplete="email" maxlength="200"><p class="err" id="e-email"></p></div>
+              <div class="fld full"><label for="f-addr">House number and street</label><input id="f-addr" autocomplete="street-address" maxlength="200"><p class="err" id="e-addr"></p></div>
+              <div class="fld"><label for="f-pc">Postcode</label><input id="f-pc" autocomplete="postal-code" autocapitalize="characters" maxlength="10"><p class="err" id="e-pc"></p></div>
+              <div class="fld full"><label for="f-notes">What needs doing? <span>(optional)</span></label><textarea id="f-notes" maxlength="1000" placeholder="A few words on the job, parking, access"></textarea></div>
+              <div class="hp" aria-hidden="true"><label for="f-web">Leave this empty</label><input id="f-web" tabindex="-1" autocomplete="off"></div>
+            </div>
+            <div class="msg" id="submsg" role="alert" hidden></div>
+            <div class="actions"><button class="btn ghost" id="b3" type="button">Back</button><button class="btn" id="n3" type="submit">Confirm booking</button></div>
+          </form>
+        </div>
+
+        <div class="panel done" id="p4" hidden aria-live="polite"></div>
+      </div>
+
+      <aside class="card summary" aria-label="Your booking so far">
+        <h4>Your booking</h4>
+        <dl>
+          <div><dt>Service</dt><dd id="s-job" class="empty">Not chosen yet</dd></div>
+          <div><dt>Date</dt><dd id="s-date" class="empty">Not chosen yet</dd></div>
+          <div><dt>Time</dt><dd id="s-win" class="empty">Not chosen yet</dd></div>
+        </dl>
+        <div class="price" id="s-price">&pound;&ndash;<small>Estimated cost</small></div>
+      </aside>
+    </div>
   </section>
 
   <section class="videos">
