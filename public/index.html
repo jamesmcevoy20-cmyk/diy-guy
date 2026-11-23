@@ -11,14 +11,14 @@
 
 <header class="site-header">
   <a class="logo" href="#top">DIY Guy</a>
-  <a class="phone" href="tel:07704756234">&#9742; 07704 756234</a>
+  <a class="phone" href="tel:07704756234">&#9742; <span id="phone-display">07704 756234</span></a>
 </header>
 
 <main id="top">
 
   <section class="welcome">
     <div class="welcome-left">
-      <a class="btn-pill" href="#book">Book Now &rarr;</a>
+      <a class="btn-pill" href="#booking">Book Now &rarr;</a>
       <img src="images/tools-house.jpg" alt="Hands holding tools around a house">
       <p>Welcome to DIY Guy - a 50plus, experienced, reliable handyman specialising in DIY services for the over 50s.</p>
     </div>
@@ -39,10 +39,36 @@
   <section class="dark" id="book">
     <h2>Book Services</h2>
     <ul class="services">
-      <li><span class="name">Home DIY (Price Per Hour)</span><span class="price">&pound;40</span><a class="btn" href="tel:07704756234">Book Now</a></li>
-      <li><span class="name">Garden Maintenance (Price Per Hour)</span><span class="price">&pound;30</span><a class="btn" href="tel:07704756234">Book Now</a></li>
-      <li><span class="name">Tech Help (Price Per Hour)</span><span class="price">&pound;50</span><a class="btn" href="tel:07704756234">Book Now</a></li>
+      <li><span class="name">Home DIY (Price Per Hour)</span><span class="price">&pound;40</span><a class="btn" href="#booking" data-service="home">Book Now</a></li>
+      <li><span class="name">Garden Maintenance (Price Per Hour)</span><span class="price">&pound;30</span><a class="btn" href="#booking" data-service="garden">Book Now</a></li>
+      <li><span class="name">Tech Help (Price Per Hour)</span><span class="price">&pound;50</span><a class="btn" href="#booking" data-service="tech">Book Now</a></li>
     </ul>
+  </section>
+
+
+  <section class="booking" id="booking">
+    <h2>Book a Time</h2>
+    <p class="lead-sm">Pick a service, a date and a one or two hour slot. I will confirm by phone.</p>
+    <form id="booking-form" novalidate>
+      <label>Service<select id="service"></select></label>
+      <fieldset class="hrs"><legend>Length of visit</legend>
+        <label><input type="radio" name="hours" value="1" checked> 1 hour</label>
+        <label><input type="radio" name="hours" value="2"> 2 hours</label>
+      </fieldset>
+      <label>Date<select id="date"></select></label>
+      <div class="field"><span class="lbl">Start time</span><div id="times" class="times"></div><span class="err" id="err-start"></span></div>
+      <p id="price" class="price-line"></p>
+      <label>Full name<input id="name" autocomplete="name"><span class="err" id="err-name"></span></label>
+      <label>Phone<input id="phone" type="tel" autocomplete="tel"><span class="err" id="err-phone"></span></label>
+      <label>Email (optional)<input id="email" type="email" autocomplete="email"><span class="err" id="err-email"></span></label>
+      <label>House number and street<input id="addr" autocomplete="street-address"><span class="err" id="err-addr"></span></label>
+      <label>Postcode<input id="pc" autocomplete="postal-code"><span class="err" id="err-pc"></span></label>
+      <label>What needs doing? (optional)<textarea id="notes" rows="3"></textarea></label>
+      <input id="website" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+      <button class="btn submit" type="submit">Book now</button>
+      <p id="form-msg" class="err"></p>
+    </form>
+    <div id="done" class="done" hidden></div>
   </section>
 
   <section class="videos">
@@ -84,5 +110,6 @@
   <div class="addr">Flackwell Heath,<br>Buckinghamshire</div>
 </footer>
 
+<script src="booking.js"></script>
 </body>
 </html>

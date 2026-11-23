@@ -1,0 +1,17 @@
+{
+  "name": "diy-guy",
+  "version": "1.0.0",
+  "description": "DIY Guy website with online booking",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "compression": "^1.8.2",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}

@@ -60,3 +60,26 @@ img{max-width:100%;display:block}
   .site-footer{grid-template-columns:1fr}
   .site-footer>div+div{border-left:0;padding-left:0;border-top:1px solid #000}
 }
+
+/* booking form */
+.booking{background:#1a0e5c;color:#f0eaff;padding:60px 4vw;border-top:1px solid #8c84c8}
+.booking h2{font-size:clamp(2.5rem,6vw,4.5rem);margin:0 0 10px;line-height:1}
+.lead-sm{margin:0 0 30px;font-size:1.1rem}
+.booking form{max-width:640px;display:grid;gap:18px}
+.booking label,.booking .field{display:grid;gap:6px;font-size:.95rem}
+.booking input,.booking select,.booking textarea{font:inherit;padding:12px;border:1px solid #8c84c8;border-radius:4px;background:#fff;color:#111;width:100%}
+.hrs{border:0;padding:0;margin:0;display:flex;gap:24px;align-items:center}
+.hrs legend{padding:0;margin-bottom:6px}
+.hrs label{display:flex;gap:8px;align-items:center}
+.hrs input{width:auto}
+.times{display:flex;flex-wrap:wrap;gap:8px}
+.time{font:inherit;padding:10px 14px;border:1px solid #8c84c8;border-radius:4px;background:transparent;color:#f0eaff;cursor:pointer}
+.time.on{background:#d4603b;border-color:#d4603b;color:#fff}
+.time:disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+.price-line{margin:0;font-weight:600}
+.err{color:#ffb4a8;font-size:.85rem;min-height:1em}
+.note{margin:0}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.submit{border:0;font:inherit;font-size:1.1rem;cursor:pointer}
+.done{max-width:640px;background:#241a70;padding:30px;border-radius:6px}
+.done h3{margin:0 0 10px;font-size:1.6rem}
