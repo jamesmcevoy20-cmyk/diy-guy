@@ -15,7 +15,7 @@
       var btns = ["confirmed", "done", "cancelled"].filter(function (s) { return s !== b.status; })
         .map(function (s) { return '<button data-ref="' + esc(b.ref) + '" data-status="' + s + '">' + s + "</button>"; }).join("");
       return '<tr class="' + esc(b.status) + '"><td>' + esc(longDate(b.date)) + "<br>" + hourLabel(b.start) + " to " + hourLabel(b.start + b.hours) +
-        "</td><td>" + esc(b.service_name) + "<br>" + b.hours + "h, £" + b.price + "<br><small>" + esc(b.ref) + "</small></td><td>" +
+        "</td><td>" + esc(b.service_name) + "<br>" + b.hours + "h" + (b.price ? ", £" + b.price : "") + "<br><small>" + esc(b.ref) + "</small></td><td>" +
         esc(b.name) + '<br><a href="tel:' + esc(b.phone) + '">' + esc(b.phone) + "</a>" + (b.email ? "<br>" + esc(b.email) : "") +
         "</td><td>" + esc(b.address) + ", " + esc(b.postcode) + (b.notes ? "<br><em>" + esc(b.notes) + "</em>" : "") +
         "</td><td>" + esc(b.status) + "</td><td>" + btns + "</td></tr>";

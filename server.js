@@ -77,7 +77,10 @@ function validateBooking(body, closed) {
   const hours = Number(body.hours);
   const start = Number(body.start);
   if (!svc) f.service = "Choose a service.";
-  if (!cfg.durations.includes(hours)) f.hours = "Choose one or two hours.";
+  const fixed = svc && svc.slots;
+  if (fixed) {
+    if (!fixed.some((s) => s[0] === start && s[1] === hours)) f.start = "Choose one of the time slots.";
+  } else if (!cfg.durations.includes(hours)) f.hours = "Choose one or two hours.";
 
   const now = londonNow();
   const date = typeof body.date === "string" ? body.date : "";
@@ -86,7 +89,7 @@ function validateBooking(body, closed) {
   else if (closed.includes(date)) f.date = "I am away on that day. Pick another date.";
 
   if (!Number.isInteger(start) || start < cfg.openHour || start + hours > cfg.closeHour) f.start = "Choose a start time.";
-  else if (!f.date && date === now.date && start * 60 - now.minutes < cfg.minNoticeMinutes) f.start = "That time is too soon. Pick a later one.";
+  else if (!f.start && !f.date && date === now.date && start * 60 - now.minutes < cfg.minNoticeMinutes) f.start = "That time is too soon. Pick a later one.";
 
   const name = clean(body.name, 100);
   const phone = clean(body.phone, 30);
@@ -128,7 +131,7 @@ app.post("/api/bookings", async (req, res) => {
   const booking = {
     ref: newRef(), service: v.svc.id, service_name: v.svc.name, date: v.date, start: v.start, hours: v.hours,
     name: v.name, phone: v.phone, email: v.email, address: v.address, postcode: v.postcode, notes: v.notes,
-    status: "new", price: v.svc.rate * v.hours, created: new Date().toISOString()
+    status: "new", price: v.svc.rate ? v.svc.rate * v.hours : 0, created: new Date().toISOString()
   };
 
   try {

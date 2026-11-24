@@ -56,18 +56,25 @@
     if (!data) return;
     $("#svcs").innerHTML = data.services.map(function (s) {
       return '<button type="button" class="svc" role="radio" data-id="' + esc(s.id) + '" aria-checked="' + (state.svc === s.id) + '">' +
-        '<span class="n">' + esc(s.name) + '</span><span class="p">&pound;' + s.rate + "<small>per hour</small></span></button>";
+        '<span class="n">' + esc(s.name) + '</span>' +
+        (s.slots ? '<span class="p"><small>2 hour slots</small></span></button>' : '<span class="p">&pound;' + s.rate + "<small>per hour</small></span></button>");
     }).join("");
     $("#n1").disabled = !state.svc;
   }
   $("#svcs").addEventListener("click", function (e) {
     var b = e.target.closest(".svc"); if (!b) return;
-    state.svc = b.dataset.id; renderSvcs(); renderSummary();
+    state.svc = b.dataset.id; state.start = null; renderSvcs(); renderSummary();
   });
+
+  function range(a, b) { var o = []; for (var i = a; i <= b; i++) o.push(i); return o; }
 
   function renderTimes() {
     if (!data) return;
     var r = data.rules;
+    var cur = state.svc && svcById(state.svc), fixed = cur && cur.slots;
+    if (fixed) state.hours = 2;
+    $("#lens").style.display = fixed ? "none" : ""; $("#ll").style.display = fixed ? "none" : "";
+    var starts = fixed ? fixed.map(function (x) { return x[0]; }) : null;
     $("#lens").innerHTML = r.durations.map(function (h) {
       return '<button type="button" class="len" role="radio" data-h="' + h + '" aria-checked="' + (state.hours === h) + '">' + h + (h > 1 ? " hours" : " hour") + "</button>";
     }).join("");
@@ -78,7 +85,8 @@
     }
     $("#dates").innerHTML = days.map(function (x) {
       var k = isoOf(x.d), full = true;
-      for (var s = r.openHour; s + state.hours <= r.closeHour; s++) if (slotState(k, s, state.hours) === "ok") { full = false; break; }
+      var cand = starts || range(r.openHour, r.closeHour - state.hours);
+      for (var c = 0; c < cand.length; c++) if (slotState(k, cand[c], state.hours) === "ok") { full = false; break; }
       var dow = x.i === 0 ? "Today" : x.i === 1 ? "Tmrw" : x.d.toLocaleDateString("en-GB", { weekday: "short" });
       return '<button type="button" class="day" role="radio" data-d="' + k + '" aria-checked="' + (state.date === k) + '"' + (full ? " disabled" : "") + ">" +
         '<span class="dow">' + dow + '</span><span class="dn">' + x.d.getDate() + '</span><span class="mo">' +
@@ -88,7 +96,9 @@
     if (!state.date) box.innerHTML = '<p class="note" style="grid-column:1/-1;margin:0">Pick a day to see the free times.</p>';
     else {
       var out = "";
-      for (var s2 = r.openHour; s2 + state.hours <= r.closeHour; s2++) {
+      var cand2 = starts || range(r.openHour, r.closeHour - state.hours);
+      for (var ci = 0; ci < cand2.length; ci++) {
+        var s2 = cand2[ci];
         var st = slotState(state.date, s2, state.hours);
         out += '<button type="button" class="win" role="radio" data-s="' + s2 + '" aria-checked="' + (state.start === s2) + '"' + (st !== "ok" ? " disabled" : "") + ">" +
           span(s2, state.hours) + "<small>" + (st === "taken" ? "Booked" : st === "past" ? "Too soon" : "Free") + "</small></button>";
@@ -120,7 +130,8 @@
     setDd("#s-job", s && s.name + ", " + state.hours + (state.hours > 1 ? " hours" : " hour"));
     setDd("#s-date", state.date && longDate(state.date));
     setDd("#s-win", state.start != null && span(state.start, state.hours));
-    $("#s-price").innerHTML = (s ? "&pound;" + s.rate * state.hours : "&pound;&ndash;") + "<small>Estimated cost</small>";
+    $("#s-price").innerHTML = s && s.slots ? "No charge to book<small>Price agreed on the day</small>" :
+      (s ? "&pound;" + s.rate * state.hours : "&pound;&ndash;") + "<small>Estimated cost</small>";
   }
 
   function validate() {
@@ -178,7 +189,7 @@
       '<ul class="recap"><li><b>Service</b><span>' + esc(b.service_name) + ", " + b.hours + (b.hours > 1 ? " hours" : " hour") + "</span></li>" +
       "<li><b>When</b><span>" + esc(longDate(b.date)) + ", " + esc(span(b.start, b.hours)) + "</span></li>" +
       "<li><b>Where</b><span>" + esc(b.address) + ", " + esc(b.postcode) + "</span></li>" +
-      "<li><b>Cost</b><span>&pound;" + esc(b.price) + "</span></li></ul>" +
+      (b.price ? "<li><b>Cost</b><span>&pound;" + esc(b.price) + "</span></li>" : "") + "</ul>" +
       '<div class="actions"><span></span><button class="btn ghost" id="again" type="button">Book another job</button></div>';
     show(4);
     $("#again").addEventListener("click", function () {
@@ -198,7 +209,7 @@
   document.querySelectorAll("[data-service]").forEach(function (a) {
     a.addEventListener("click", function (e) {
       e.preventDefault();
-      state.svc = a.getAttribute("data-service");
+      state.svc = a.getAttribute("data-service"); state.start = null;
       load().then(function () { renderSummary(); show(2); });
     });
   });
