@@ -60,7 +60,7 @@
     $("#svcs").innerHTML = data.services.map(function (s) {
       return '<button type="button" class="svc' + (s.featured ? " feat" : "") + '" role="radio" data-id="' + esc(s.id) + '" aria-checked="' + (state.svc === s.id) + '">' +
         '<span class="n">' + esc(s.name) + '</span>' +
-        (s.slots ? '<span class="p"><small>' + (s.arrive ? "One a day" : "Three a day") + '</small></span></button>' : '<span class="p">&pound;' + s.rate + "<small>per hour</small></span></button>");
+        (s.slots ? '<span class="p"><small>' + (s.arrive ? "One a day" : "Three a day, 2 hour slots") + '</small></span></button>' : '<span class="p">&pound;' + s.rate + "<small>per hour</small></span></button>");
     }).join("");
     $("#n1").disabled = !state.svc;
   }
