@@ -6,6 +6,8 @@ const cfg = require("./lib/config");
 const store = require("./lib/db");
 const telegram = require("./lib/telegram");
 const { londonNow, addDays, weekday, isIsoDate } = require("./lib/time");
+const hourLabel = (h) => (h === 12 ? "12pm" : h > 12 ? (h - 12) + "pm" : h + "am");
+const winLabel = (b) => { const s = cfg.services.find((x) => x.id === b.service); return (s && s.arrive) || hourLabel(b.start) + " to " + hourLabel(b.start + b.hours); };
 
 const app = express();
 app.set("trust proxy", 1);
@@ -147,6 +149,7 @@ app.post("/api/bookings", async (req, res) => {
     }
   }
 
+  booking.win_label = winLabel(booking);
   telegram.notify(booking); // not awaited: the customer should not wait on Telegram
   res.status(201).json({ booking });
 });
@@ -181,7 +184,7 @@ app.get("/admin.js", adminAuth, (req, res) => res.sendFile(path.join(adminFiles,
 app.get("/api/admin/bookings", adminAuth, async (req, res) => {
   try {
     res.set("Cache-Control", "no-store");
-    res.json({ today: londonNow().date, bookings: await store.list(), closed: await store.closedDates() });
+    res.json({ today: londonNow().date, bookings: (await store.list()).map((b) => ({ ...b, win_label: winLabel(b) })), closed: await store.closedDates() });
   } catch (e) { console.error(e); res.status(500).json({ error: "Could not load." }); }
 });
 

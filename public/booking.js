@@ -7,7 +7,10 @@
   var isoOf = function (d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
   var longDate = function (s) { return fromIso(s).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }); };
   var hourLabel = function (h) { return h === 12 ? "12pm" : h > 12 ? (h - 12) + "pm" : h + "am"; };
-  var span = function (s, h) { return hourLabel(s) + " to " + hourLabel(s + h); };
+  var span = function (s, h, svcId) {
+    var sv = data && svcById(svcId || state.svc);
+    return sv && sv.arrive ? sv.arrive : hourLabel(s) + " to " + hourLabel(s + h);
+  };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var PHONE = "info@diy-guy.co.uk";
 
@@ -55,9 +58,9 @@
   function renderSvcs() {
     if (!data) return;
     $("#svcs").innerHTML = data.services.map(function (s) {
-      return '<button type="button" class="svc" role="radio" data-id="' + esc(s.id) + '" aria-checked="' + (state.svc === s.id) + '">' +
+      return '<button type="button" class="svc' + (s.featured ? " feat" : "") + '" role="radio" data-id="' + esc(s.id) + '" aria-checked="' + (state.svc === s.id) + '">' +
         '<span class="n">' + esc(s.name) + '</span>' +
-        (s.slots ? '<span class="p"><small>2 hour slots</small></span></button>' : '<span class="p">&pound;' + s.rate + "<small>per hour</small></span></button>");
+        (s.slots ? '<span class="p"><small>' + (s.arrive ? "One a day" : "2 hour slots") + '</small></span></button>' : '<span class="p">&pound;' + s.rate + "<small>per hour</small></span></button>");
     }).join("");
     $("#n1").disabled = !state.svc;
   }
@@ -72,7 +75,8 @@
     if (!data) return;
     var r = data.rules;
     var cur = state.svc && svcById(state.svc), fixed = cur && cur.slots;
-    if (fixed) state.hours = 2;
+    if (fixed) state.hours = fixed[0][1];
+    else if (r.durations.indexOf(state.hours) < 0) state.hours = 1;
     $("#lens").style.display = fixed ? "none" : ""; $("#ll").style.display = fixed ? "none" : "";
     var starts = fixed ? fixed.map(function (x) { return x[0]; }) : null;
     $("#lens").innerHTML = r.durations.map(function (h) {
@@ -127,7 +131,7 @@
   function setDd(sel, text) { var el = $(sel); el.textContent = text || "Not chosen yet"; el.className = text ? "" : "empty"; }
   function renderSummary() {
     var s = state.svc && data ? svcById(state.svc) : null;
-    setDd("#s-job", s && s.name + ", " + state.hours + (state.hours > 1 ? " hours" : " hour"));
+    setDd("#s-job", s && (s.arrive ? s.name : s.name + ", " + state.hours + (state.hours > 1 ? " hours" : " hour")));
     setDd("#s-date", state.date && longDate(state.date));
     setDd("#s-win", state.start != null && span(state.start, state.hours));
     $("#s-price").innerHTML = s && s.slots ? "No charge to book<small>Price agreed on the day</small>" :
@@ -186,8 +190,8 @@
     $("#p4").innerHTML =
       '<span class="okbadge">Booked</span><div class="ref">' + esc(b.ref) + "</div><h3>You are booked in</h3>" +
       '<p class="lead">Keep your reference. I will phone ' + esc(b.phone) + " if anything about the visit changes.</p>" +
-      '<ul class="recap"><li><b>Service</b><span>' + esc(b.service_name) + ", " + b.hours + (b.hours > 1 ? " hours" : " hour") + "</span></li>" +
-      "<li><b>When</b><span>" + esc(longDate(b.date)) + ", " + esc(span(b.start, b.hours)) + "</span></li>" +
+      '<ul class="recap"><li><b>Service</b><span>' + esc(b.service_name) + (b.win_label && b.service === "install" ? "" : ", " + b.hours + (b.hours > 1 ? " hours" : " hour")) + "</span></li>" +
+      "<li><b>When</b><span>" + esc(longDate(b.date)) + ", " + esc(span(b.start, b.hours, b.service)) + "</span></li>" +
       "<li><b>Where</b><span>" + esc(b.address) + ", " + esc(b.postcode) + "</span></li>" +
       (b.price ? "<li><b>Cost</b><span>&pound;" + esc(b.price) + "</span></li>" : "") + "</ul>" +
       '<div class="actions"><span></span><button class="btn ghost" id="again" type="button">Book another job</button></div>';

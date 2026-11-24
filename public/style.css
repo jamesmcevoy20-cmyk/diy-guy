@@ -27,6 +27,10 @@ img{max-width:100%;display:block}
 .services{list-style:none;margin:0;padding:0;border-top:1px solid #8c84c8}
 .services li{display:grid;grid-template-columns:1fr 120px 150px;align-items:center;gap:20px;padding:40px 0;border-bottom:1px solid #8c84c8}
 .services .name{font-size:1.15rem}
+.services li.feat{background:#f5c542;color:#1a0e5c;padding:28px 20px;margin-bottom:12px;border-radius:10px;border-bottom:0;font-weight:700}
+.services li.feat .btn{background:#1a0e5c}
+.svc.feat{background:#fff6d6;border-color:#e0a800}
+.svc.feat[aria-checked="true"]{background:#ffeaa0;border-color:#d4603b}
 .btn{background:#d4603b;color:#fff;text-align:center;padding:12px 0;text-decoration:none}
 .btn:hover{background:#e0704b}
 

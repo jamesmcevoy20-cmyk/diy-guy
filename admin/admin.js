@@ -2,7 +2,7 @@
   var $ = function (s) { return document.querySelector(s); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var hourLabel = function (h) { return h === 12 ? "12pm" : h > 12 ? (h - 12) + "pm" : h + "am"; };
-  var winLabel = function (b) { return hourLabel(b.start) + " to " + hourLabel(b.start + b.hours); };
+  var winLabel = function (b) { return b.win_label || hourLabel(b.start) + " to " + hourLabel(b.start + b.hours); };
   var pad2 = function (n) { return String(n).padStart(2, "0"); };
   var STATUSES = ["new", "confirmed", "done", "cancelled"];
   var all = [], today = "", showAll = false, closedList = [], calMonth = "", calSel = "";
