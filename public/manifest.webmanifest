@@ -1,0 +1,15 @@
+{
+  "name": "DIY Guy",
+  "short_name": "DIY Guy",
+  "description": "Handyman, garden and tech help in Bucks & Berks",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf0eb",
+  "theme_color": "#4a7c3a",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
