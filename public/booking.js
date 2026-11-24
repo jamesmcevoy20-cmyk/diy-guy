@@ -9,7 +9,7 @@
   var hourLabel = function (h) { return h === 12 ? "12pm" : h > 12 ? (h - 12) + "pm" : h + "am"; };
   var span = function (s, h) { return hourLabel(s) + " to " + hourLabel(s + h); };
   var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
-  var PHONE = document.getElementById("phone-display").textContent;
+  var PHONE = "info@diy-guy.co.uk";
 
   var data = null, fetchedAt = 0;
   var state = { step: 1, svc: null, hours: 1, date: null, start: null, busy: false };
@@ -24,7 +24,7 @@
         $("#slotnote").textContent = "";
         renderSvcs(); renderTimes(); renderSummary();
       })
-      .catch(function () { $("#slotnote").textContent = "Could not check availability. Please call " + PHONE + "."; });
+      .catch(function () { $("#slotnote").textContent = "Could not check availability. Please email " + PHONE + "."; });
   }
 
   function slotState(date, start, hours) {
@@ -165,10 +165,10 @@
           if (res.body.fields.date || res.body.fields.start || res.body.fields.hours || res.body.fields.service) load().then(function () { show(2); });
           return;
         }
-        if (res.status === 429) { note("Too many attempts. Please wait a few minutes or phone " + PHONE + "."); return; }
-        note("I could not save your booking. Try again, or phone " + PHONE + ".");
+        if (res.status === 429) { note("Too many attempts. Please wait a few minutes or email " + PHONE + "."); return; }
+        note("I could not save your booking. Try again, or email " + PHONE + ".");
       })
-      .catch(function () { reset(); note("Could not reach the server. Check your connection, or phone " + PHONE + "."); });
+      .catch(function () { reset(); note("Could not reach the server. Check your connection, or email " + PHONE + "."); });
   });
 
   function finish(b) {

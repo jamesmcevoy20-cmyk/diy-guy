@@ -4,7 +4,7 @@ body{margin:0;font-family:"Helvetica Neue",Arial,sans-serif;color:#111;backgroun
 a{color:inherit}
 img{max-width:100%;display:block}
 
-.site-header{display:flex;justify-content:space-between;align-items:center;padding:18px 5vw;background:#faf0eb}
+.site-header{display:flex;justify-content:center;align-items:center;padding:18px 5vw;background:#faf0eb}
 .logo{font-size:2.2rem;color:#4a7c3a;text-decoration:none;font-weight:500}
 .phone{font-size:2rem;color:#4a7c3a;text-decoration:none}
 
@@ -40,7 +40,7 @@ img{max-width:100%;display:block}
 .adv p{margin:0;max-width:700px;font-size:.95rem}
 .icon{width:80px;height:80px;flex:none}
 
-.site-footer{display:grid;grid-template-columns:1fr 1fr;margin:60px 4vw 40px;border-top:1px solid #000;border-bottom:1px solid #000}
+.site-footer{display:grid;grid-template-columns:1fr;margin:60px 4vw 40px;border-top:1px solid #000;border-bottom:1px solid #000}
 .site-footer>div{padding:24px 0}
 .site-footer>div+div{border-left:1px solid #000;padding-left:40px;align-self:center}
 .site-footer h4{margin:0 0 6px;font-size:1.6rem;color:#4a7c3a}
