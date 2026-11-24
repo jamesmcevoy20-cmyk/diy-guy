@@ -1,20 +1,95 @@
 <!doctype html>
-<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>DIY Guy bookings</title>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Bookings | DIY Guy</title>
 <style>
-body{font-family:system-ui,sans-serif;margin:0;padding:20px;background:#f5f5f8;color:#111}
-h1{margin:0 0 16px}h2{margin:28px 0 10px}
-table{border-collapse:collapse;width:100%;background:#fff}
-th,td{padding:8px 10px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top;font-size:.92rem}
-button{font:inherit;padding:5px 10px;margin:2px;cursor:pointer}
-.new{background:#fff3cd}.cancelled{opacity:.5}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-</style></head><body>
-<h1>DIY Guy bookings</h1>
-<label><input type="checkbox" id="showAll"> Show past and cancelled</label>
-<table><thead><tr><th>When</th><th>Job</th><th>Customer</th><th>Where</th><th>Status</th><th></th></tr></thead><tbody id="rows"></tbody></table>
-<h2>Days off</h2>
-<div class="row"><input type="date" id="closeDate"><button id="closeBtn">Block this day</button></div>
-<p id="closedList"></p>
+:root{--ink:#3f3d56;--muted:#5b5872;--line:#cfc9e6;--green:#4a7c3a;--green-soft:#e7f0e3;--accent:#d4603b;--accent-soft:#fdf0ea;--surface:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:#f0ebfc;line-height:1.45}
+.bar{background:#faf0eb;padding:14px 16px;border-bottom:3px solid var(--green)}
+.bar-in{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-size:1.6rem;color:var(--green);text-decoration:none;font-weight:600}
+.sos{font-size:.85rem;color:var(--muted)}
+.wrap{max-width:900px;margin:0 auto;padding:20px 14px 40px}
+.hero h1{margin:0 0 4px;font-size:1.8rem}
+.hero p{margin:0 0 16px;color:var(--muted)}
+.card{background:#fff;border:2px solid var(--green);border-radius:10px;padding:18px;margin-bottom:16px}
+.card h2{margin:0 0 6px;font-size:1.2rem}
+.note{color:var(--muted);font-size:.9rem;margin:0}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0;align-items:center}
+select{font:inherit;min-height:42px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--ink);flex:1;min-width:0}
+.chip{font:inherit;padding:8px 14px;border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font-weight:600;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.olist{display:grid;gap:10px;margin-top:14px}
+.job{border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:6px;background:var(--surface)}
+.job-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.job-top b{font-size:1.05rem}
+.job .meta{color:var(--muted);font-size:.92rem;overflow-wrap:anywhere}
+.job .meta a{color:var(--accent)}
+.pill{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:2px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+.pill[data-s="confirmed"]{background:var(--green-soft);color:var(--green)}
+.pill[data-s="done"]{background:#eee;color:#666}
+.pill[data-s="cancelled"]{background:#f3e3e3;color:#a33}
+.statusbtns{display:flex;gap:6px;flex-wrap:wrap}
+.empty-state{color:var(--muted);padding:20px 4px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.cal-head h2{margin:0;text-align:center;flex:1}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-dow{font-size:.72rem;font-weight:700;text-align:center;color:var(--muted);text-transform:uppercase}
+.cal-day{background:var(--surface);border:1.5px solid var(--line);border-radius:6px;min-height:52px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;color:var(--ink);cursor:pointer}
+.cal-day.blank{visibility:hidden}
+.cal-day.we{opacity:.55}
+.cal-day.today{border-color:var(--accent);border-width:2.5px}
+.cal-day.off{background:#e4e4e4;color:#555}
+.cal-day[aria-pressed="true"]{outline:3px solid var(--accent)}
+.cal-day .n{font-weight:700;font-size:.9rem}
+.cal-day .b{font-size:.7rem;font-weight:800;background:var(--accent);color:#fff;border-radius:10px;padding:0 6px}
+.cal-day .o{font-size:.65rem;font-weight:700}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <a class="brand" href="/">DIY Guy</a>
+    <div class="sos">Owner bookings list</div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="hero">
+    <h1>Bookings</h1>
+    <p>Soonest first. Change a status with the buttons. Cancelling a job frees its time slot.</p>
+  </div>
+  <div class="card">
+    <h2>Days off</h2>
+    <p class="note">Customers cannot book these days.</p>
+    <div class="filterbar">
+      <select id="c-date" aria-label="Date to block"></select>
+      <button class="chip" id="c-add" type="button">Block this day</button>
+    </div>
+    <div id="closed" class="olist"></div>
+  </div>
+  <div class="card">
+    <div class="cal-head">
+      <button class="chip" id="cal-prev" type="button" aria-label="Previous month">&lsaquo;</button>
+      <h2 id="cal-title"></h2>
+      <button class="chip" id="cal-next" type="button" aria-label="Next month">&rsaquo;</button>
+    </div>
+    <div class="cal-grid" id="cal-dows"></div>
+    <div class="cal-grid" id="cal-grid" style="margin-top:4px"></div>
+    <div id="cal-day" class="olist"></div>
+  </div>
+  <div class="card">
+    <div class="filterbar" role="group" aria-label="Filter bookings" style="margin-top:0">
+      <button class="chip" id="f-upcoming" type="button" aria-pressed="true">Upcoming</button>
+      <button class="chip" id="f-all" type="button" aria-pressed="false">All</button>
+    </div>
+    <div id="count" class="note" style="margin-top:10px">Loading bookings</div>
+    <div class="olist" id="list"></div>
+  </div>
+</main>
 <script src="/admin.js"></script>
-</body></html>
+</body>
+</html>
