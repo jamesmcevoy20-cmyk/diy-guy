@@ -34,6 +34,8 @@ if (process.env.CANONICAL_REDIRECT === "1") {
   const canonicalHost = new URL(cfg.baseUrl).hostname;
   app.use((req, res, next) => {
     const host = (req.hostname || "").toLowerCase();
+    // The owner app is installed from the onrender.com address (its own app, separate from the public site), so leave admin pages alone there.
+    if (/^\/(admin|api\/admin)(\/|\.|$)|^\/admin-/.test(req.path)) return next();
     if (host && host !== canonicalHost && host !== "localhost" && /^(GET|HEAD)$/.test(req.method)) {
       return res.redirect(301, cfg.baseUrl + req.originalUrl);
     }
