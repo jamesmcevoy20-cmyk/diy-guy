@@ -5,6 +5,7 @@ const compression = require("compression");
 const cfg = require("./lib/config");
 const store = require("./lib/db");
 const telegram = require("./lib/telegram");
+const joblog = require("./lib/joblog");
 const { londonNow, addDays, weekday, isIsoDate } = require("./lib/time");
 const hourLabel = (h) => (h === 12 ? "12pm" : h > 12 ? (h - 12) + "pm" : h + "am");
 const winLabel = (b) => { const s = cfg.services.find((x) => x.id === b.service); return (s && s.arrive) || hourLabel(b.start) + " to " + hourLabel(b.start + b.hours); };
@@ -151,6 +152,7 @@ app.post("/api/bookings", async (req, res) => {
 
   booking.win_label = winLabel(booking);
   telegram.notify(booking); // not awaited: the customer should not wait on Telegram
+  joblog.send(booking); // also not awaited: adds the booking to Job Log
   res.status(201).json({ booking });
 });
 
