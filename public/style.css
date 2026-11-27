@@ -5,7 +5,11 @@ a{color:inherit}
 img{max-width:100%;display:block}
 
 .site-header{display:flex;justify-content:center;align-items:center;padding:18px 5vw;background:#faf0eb}
-.logo{font-size:2.2rem;color:#4a7c3a;text-decoration:none;font-weight:500}
+.logo{display:flex;align-items:center;gap:14px;color:#2f5224;text-decoration:none}
+.logo img{width:64px;height:64px;display:block}
+.logo-text{display:flex;flex-direction:column;gap:2px}
+.logo-name{font-family:"Archivo Black",sans-serif;font-size:2.4rem;line-height:1;letter-spacing:1px}
+.logo-tag{font-family:Inter,sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.45em;color:#4a7c3a}
 .phone{font-size:2rem;color:#4a7c3a;text-decoration:none}
 
 .welcome{display:grid;grid-template-columns:1fr 1fr;gap:5vw;padding:40px 5vw;align-items:start}
