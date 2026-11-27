@@ -158,6 +158,18 @@ app.post("/api/bookings", async (req, res) => {
   res.status(201).json({ booking });
 });
 
+// Job Log tells us when a DIY Guy job is deleted there, so the time slot is freed here too.
+app.post("/api/intake/cancel", async (req, res) => {
+  const want = process.env.INTAKE_KEY || "";
+  const given = String(req.get("x-intake-key") || "");
+  const ha = crypto.createHash("sha256").update(given).digest(), hb = crypto.createHash("sha256").update(want).digest();
+  if (!want || !crypto.timingSafeEqual(ha, hb)) return res.status(401).json({ error: "Bad key" });
+  const ref = String((req.body && req.body.ref) || "");
+  if (!/^DG-[A-Z0-9]+$/.test(ref)) return res.status(400).json({ error: "Bad ref" });
+  try { const ok = await store.setStatus(ref, "cancelled"); res.json({ ok: !!ok }); }
+  catch (e) { console.error(e); res.status(500).json({ error: "Could not update." }); }
+});
+
 /* ---------- owner pages (password protected) ---------- */
 const failures = new Map(); // ip -> { n, until }
 setInterval(() => { const t = Date.now(); for (const [k, v] of failures) if (v.until < t && v.n < 8) failures.delete(k); }, 10 * 60 * 1000).unref();
@@ -199,6 +211,11 @@ app.patch("/api/admin/bookings/:ref", adminAuth, async (req, res) => {
     const ok = await store.setStatus(req.params.ref, status);
     if (!ok) return res.status(404).json({ error: "Not found." });
     res.json({ ok: true });
+    // keep Job Log in step (not awaited)
+    store.list().then((all) => {
+      const b = all.find((x) => x.ref === req.params.ref);
+      if (b) joblog.sync({ ...b, win_label: winLabel(b) }, status);
+    }).catch((e) => console.error(e));
   } catch (e) {
     if (e.code === "taken") return res.status(409).json({ error: "That time is taken by another booking." });
     console.error(e);
